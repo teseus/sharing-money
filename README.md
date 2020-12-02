@@ -1,4 +1,4 @@
-# apibase
+# sharing-money
 ## java version
 #### ZGC 와 records, text block, seal class 와 같은 최신 문법을 사용하기 위해, amazon 의 java 15 버전을 사용합니다. "15.0.0-amzn"
 ## java 15 설치방법
@@ -26,3 +26,6 @@ $ sdk u java 15.0.0-amzn
 ```
 java -jar -XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Xms512m -Xmx1g --enable-preview -Dspring.profiles.active=local ./api/build/libs/api-0.0.1-SNAPSHOT.jar
 ```
+### 인테리제이의 gradle 플러긴 컴파일 에러가 나오는 경우
+- 아래와 같 인텔리제이의 G이radle plugin 의 JVM 을 맞춰줘야 함.
+![superkey](./images/intelliJ-Gradle-Setting.png)
