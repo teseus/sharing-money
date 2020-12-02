@@ -19,10 +19,12 @@ class ApiControllerTest extends Specification {
         def body = webTestClient.get()
                 .uri("/api/v1/greet/${name}")
                 .accept(MediaType.APPLICATION_JSON)
+                .header("test-header", "header-test")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(GreetingDTO.class)
         then:
         body.returnResult().responseBody.greet() == "Hello ${name}"
+        body.returnResult().responseBody.headerValue() == "header-test"
     }
 }

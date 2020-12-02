@@ -9,7 +9,8 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api")
 public class ApiController {
     @GetMapping("/v1/greet/{name}")
-    public Mono<ResponseEntity<GreetingDTO>> greeting(@PathVariable String name){
-        return Mono.just(ResponseEntity.ok(GreetingDTO.ofName(name)));
+    public Mono<ResponseEntity<GreetingDTO>> greeting(@PathVariable String name,
+                                                      @RequestHeader("test-header") String headerValue){
+        return Mono.just(ResponseEntity.ok(GreetingDTO.ofName(name, headerValue)));
     }
 }
