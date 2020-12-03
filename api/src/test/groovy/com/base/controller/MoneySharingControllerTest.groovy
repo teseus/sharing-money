@@ -72,7 +72,7 @@ class MoneySharingControllerTest extends Specification {
                 "토큰은 같되 아이디는 뿌린사람과 같아야 한다." +
                 "뿌린 시각, 뿌린 금액, 받기 완료된 금액, 받기 완료된 정보 ([받은 금액, 받은사용자 아이디] 리스트)"
         body = webTestClient.get()
-                .uri("/api/v1/money/status/${receivedToken}")
+                .uri("/api/v1/status/${receivedToken}")
                 .accept(MediaType.APPLICATION_JSON)
                 .header("X-USER-ID", sharingUserId)
                 .header("X-ROOM-ID", roomId)
