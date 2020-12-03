@@ -14,5 +14,6 @@ import javax.persistence.Id;
 public class Sharing {
     @Id
     private String token;
+    private String roomId;
     private long totalAmount;
 }
