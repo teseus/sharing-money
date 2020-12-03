@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account extends CommonEntity {
+public final class Account extends CommonEntity {
     @Id
     private long accountId;
     private long amount;

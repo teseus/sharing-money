@@ -9,7 +9,7 @@ import javax.persistence.Id;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public final class User extends CommonEntity {
     @Id
     private long userId;
 }
