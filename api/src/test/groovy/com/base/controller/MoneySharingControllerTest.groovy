@@ -33,7 +33,7 @@ class MoneySharingControllerTest extends Specification {
         tokenCreationRequest = new SharingRequestDTO(10000, 3)
     }
 
-    def "금액을 뿌리고, 뿌린 금액을 받고, 현재 상황을 리턴해야 한다."() {
+    def "3가지의 api를 호출했을 때 에러가 발생하지 않아야 한다."() {
         given:
         def request = new SharingRequestDTO(10000, 3)
         when: "뿌릴 금액, 뿌릴 인원으로 뿌리기 api 호출하면 3자리의 문자열로 토큰을 리턴한다."
