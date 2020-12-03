@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 public class MoneySharingController {
     @PostMapping("/money/share")
     public Mono<ResponseEntity<TokenResponseDTO>> createToken(
-            @RequestHeader("X-USER-ID") Integer userId,
+            @RequestHeader("X-USER-ID") long userId,
             @RequestHeader("X-ROOM-ID") String roomId,
             @RequestBody SharingRequestDTO sharingRequestDTO){
         log.debug("received {}", sharingRequestDTO);
