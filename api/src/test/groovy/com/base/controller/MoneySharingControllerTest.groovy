@@ -2,6 +2,7 @@ package com.base.controller
 
 import com.base.dto.AllowanceResponseDTO
 import com.base.dto.SharingRequestDTO
+import com.base.dto.StatusResponseDTO
 import com.base.dto.TokenResponseDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
@@ -13,11 +14,12 @@ import spock.lang.Specification
 
 @WebFluxTest(MoneySharingController.class)
 class MoneySharingControllerTest extends Specification {
+    //api 호출과 리턴이 잘되는 지만 테스트한다. 내용은 각 유닛테스트에서 체크 한다.
     @Autowired
     WebTestClient webTestClient
 
     @Shared
-    def userId
+    def sharingUserId
     @Shared
     def roomId
     @Shared
@@ -26,7 +28,7 @@ class MoneySharingControllerTest extends Specification {
     def body
 
     def setup() {
-        userId = "1004"
+        sharingUserId = "1004"
         roomId = "SuiteRoom"
         tokenCreationRequest = new SharingRequestDTO(10000, 3)
     }
@@ -39,20 +41,19 @@ class MoneySharingControllerTest extends Specification {
                 .uri("/api/v1/money/share")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .header("X-USER-ID", userId)
+                .header("X-USER-ID", sharingUserId)
                 .header("X-ROOM-ID", roomId)
                 .body(Mono.just(request), SharingRequestDTO.class)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(TokenResponseDTO.class)
 
-        then:
+        then:"리턴된 토큰의 길이는 3이어야 한다."
         body.returnResult().responseBody.token().size() == 3
 
-        and:
+        and:"이전 테스트에서 받은 바디에서 토큰을 취한"
         def receivedToken = body.returnResult().responseBody.token()
-        when:
-        "받은 token 으로 받기 API 를 요청하면 할당된 금액들 중 하나를 리턴한다." +
+        when: "받은 token 으로 받기 API 를 요청하면 할당된 금액들 중 하나를 리턴한다." +
                 "토큰은 같되 아이디는 달라야 한다."
         def otherId = "4000"
         body = webTestClient.get()
@@ -65,5 +66,20 @@ class MoneySharingControllerTest extends Specification {
                 .expectBody(AllowanceResponseDTO.class)
         then: "금액이 0원 이상이어야 한다."
         body.returnResult().responseBody.amount() > 0
+
+        and:
+        when: "받은 token 으로 조회 API 를 요청하면, 현재 상태를 리턴한다." +
+                "토큰은 같되 아이디는 뿌린사람과 같아야 한다." +
+                "뿌린 시각, 뿌린 금액, 받기 완료된 금액, 받기 완료된 정보 ([받은 금액, 받은사용자 아이디] 리스트)"
+        body = webTestClient.get()
+                .uri("/api/v1/money/status/${receivedToken}")
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-USER-ID", sharingUserId)
+                .header("X-ROOM-ID", roomId)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(StatusResponseDTO.class)
+        then:
+        body.returnResult().responseBody.sharedTotal() > 0
     }
 }
