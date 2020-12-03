@@ -22,6 +22,7 @@ public class MoneySharingController {
             @RequestHeader("X-ROOM-ID") String roomId,
             @RequestBody SharingRequestDTO sharingRequestDTO){
         log.debug("create a token with [{}], userId [{}], roomId [{}]\"", sharingRequestDTO, userId, roomId);
+
         return Mono.just(ResponseEntity.ok(new TokenResponseDTO("ABC")));
     }
 
