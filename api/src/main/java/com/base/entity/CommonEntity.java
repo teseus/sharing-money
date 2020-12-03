@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class CommonEntity {
+public abstract sealed class CommonEntity
+        permits User, Account, Sharing {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

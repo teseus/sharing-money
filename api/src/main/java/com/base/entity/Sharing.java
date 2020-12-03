@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sharing {
+public final class Sharing extends CommonEntity {
     @Id
     private String token;
     private String roomId;
