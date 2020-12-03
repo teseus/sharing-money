@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class SharingApplicationServiceHelperTest extends Specification {
 
-    def "3자리의 알파벳 숫자 조합 토큰값을 생성한다"(){
+    def "생성한 토큰의 자리수는 3이 되어야 한다."(){
         when:
         def token = SharingApplicationServiceHelper.generate3LengthToken()
         then:
