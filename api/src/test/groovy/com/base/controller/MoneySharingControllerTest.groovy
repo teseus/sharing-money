@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 import spock.lang.Shared
 import spock.lang.Specification
 
-@WebFluxTest(MoneySharingController.class)
+@WebFluxTest
 class MoneySharingControllerTest extends Specification {
     //api 호출과 리턴이 잘되는 지만 테스트한다. 내용은 각 유닛테스트에서 체크 한다.
     @Autowired
