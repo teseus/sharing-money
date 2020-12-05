@@ -11,7 +11,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByAccountId(long accountId);
     @Query("""
         select a from Account a 
-        join fetch a.sharing 
+        join fetch a.sharing s
+        where s.id = :sharingId
     """) //Join Fetch N+1 회피.
-    List<Account> findAccountBySharingId(Long Id);
+    List<Account> findAccountBySharingId(long sharingId);
 }

@@ -23,12 +23,13 @@ class AccountRepositoryTest extends Specification {
     def setup() {
         sharing= sharingRepository.save(Sharing.builder()
                 .roomId("ABC")
+                .user(userRepository.save(new User(1)))
                 .totalAmount(10000)
                 .build())
     }
 
     @Transactional
-    def "Token 으로 Account 들 찾을 수 있어야한다."() {
+    def "id로 Account 들 찾을 수 있어야한다."() {
         given:
         def targets = [Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build(),
                        Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build(),
@@ -60,7 +61,7 @@ class AccountRepositoryTest extends Specification {
     }
 
     @Transactional
-    def "유저 포함 Account 를 저장하고 찾을 수 있어야 한다."(){
+    def "유저 포함하여 Account 를 저장하고 찾을 수 있어야 한다."(){
         given:
         def user = userRepository.save(new User(1L))
         def account = Account.builder().amount(3333).sharing(sharing).user(Optional.of(user)).build()

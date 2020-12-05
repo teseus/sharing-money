@@ -23,7 +23,7 @@ public final class Account extends CommonEntity {
     private User user;
 
     @Version
-    private int isDirty;
+    private int dirty;
 
     @Builder
     public Account(final long amount,
@@ -32,5 +32,10 @@ public final class Account extends CommonEntity {
         this.amount = amount;
         this.sharing = sharing;
         user.ifPresent(it->this.user = it);
+    }
+
+    public Account allocateUser(User user){
+        this.user = user;
+        return this;
     }
 }
