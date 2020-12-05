@@ -4,11 +4,11 @@ public class Base62 {
 
     private static final String ALPHABET = "5N8mABTtnJuLv4w9Hqck1DWU70FrZgbR3VlM2OaozxQPSyKiseYEIXf6GhpdjC";
 
-    private static final int BASE = ALPHABET.length();
+    private static final long BASE = ALPHABET.length();
 
     private Base62() {}
 
-    public static String fromBase10(int i) {
+    public static String fromBase10(long i) {
         StringBuilder sb = new StringBuilder("");
         if (i == 0) {
             return String.valueOf(ALPHABET.charAt(0));
@@ -19,8 +19,8 @@ public class Base62 {
         return sb.reverse().toString();
     }
 
-    private static int fromBase10(int i, final StringBuilder sb) {
-        int rem = i % BASE;
+    private static long fromBase10(long i, final StringBuilder sb) {
+        int rem = Long.valueOf(i % BASE).intValue();
         sb.append(ALPHABET.charAt(rem));
         return i / BASE;
     }

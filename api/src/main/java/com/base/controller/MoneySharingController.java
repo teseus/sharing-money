@@ -4,7 +4,9 @@ import com.base.dto.AllowanceResponseDTO;
 import com.base.dto.SharingRequestDTO;
 import com.base.dto.StatusResponseDTO;
 import com.base.dto.TokenResponseDTO;
+import com.base.entity.Sharing;
 import com.base.service.SharingApplicationService;
+import com.base.util.Encoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,10 @@ public class MoneySharingController {
             @RequestBody SharingRequestDTO sharingRequestDTO){
         log.debug("create a token with [{}], userId [{}], roomId [{}]\"", sharingRequestDTO, userId, roomId);
 
-        return Mono.just(ResponseEntity.ok(new TokenResponseDTO("ABC")));
+        Sharing sharing = sharingApplicationService.shareMoney(
+                userId, roomId, sharingRequestDTO.sharingMoney(), sharingRequestDTO.targetSize());
+
+        return Mono.just(ResponseEntity.ok(new TokenResponseDTO(Encoder.encode(sharing.getId()))));
     }
 
     @GetMapping("/money/{receivedToken}")
