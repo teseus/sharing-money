@@ -13,5 +13,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
         select a from Account a 
         join fetch a.sharing 
     """) //Join Fetch N+1 회피.
-    List<Account> findAccountBySharingToken(String token);
+    List<Account> findAccountBySharingId(Long Id);
 }

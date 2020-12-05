@@ -8,15 +8,19 @@ import spock.lang.Specification
 
 @SpringBootTest
 class SharingRepositoryTest extends Specification {
-    public static final String TOKEN = "ABC"
     @Autowired
     SharingRepository sharingRepository
 
     @Transactional
     def "뿌리기에 저장하고 저장한 것을 찾을 수 있어야 한다."(){
         when:
-        def sharing = sharingRepository.save(new Sharing(TOKEN, "SuiteRoom", 10000L))
-        def foundSharing = sharingRepository.findById(TOKEN)
+
+        def sharing = sharingRepository.save(Sharing.builder()
+                .roomId("123")
+                .totalAmount(10000)
+                .build())
+
+        def foundSharing = sharingRepository.findById(sharing.getId())
         then:
         foundSharing.isPresent()
         sharing == foundSharing.get()

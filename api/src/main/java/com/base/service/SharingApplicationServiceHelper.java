@@ -1,5 +1,7 @@
 package com.base.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class SharingApplicationServiceHelper {
@@ -9,13 +11,13 @@ public class SharingApplicationServiceHelper {
 
     public static String generate3LengthToken() {
         return new Random().ints(ASCII_ZERO, ASCII_SMALL_Z + 1)
-                .filter(SharingApplicationServiceHelper::isAlphabetOrNumer)
+                .filter(SharingApplicationServiceHelper::isAlphabetOrNumber)
                 .limit(TOKEN_SIZE)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
     }
 
-    private static boolean isAlphabetOrNumer(int i) {
+    private static boolean isAlphabetOrNumber(int i) {
         return (isUnderMaxNumeric(i) || isOverA(i)) && (isUnderZ(i) || isOverLowerA(i));
     }
 
@@ -33,5 +35,17 @@ public class SharingApplicationServiceHelper {
 
     private static boolean isUnderMaxNumeric(int i) {
         return i <= 57;
+    }
+
+    public static List<Long> separate(long totalMoney, long separateNumber) {
+        long unit = totalMoney / separateNumber;
+        List<Long> separatedValues = new ArrayList<>();
+        long sum = 0;
+        for (int i = 0; i < separateNumber-1; i++) {
+            separatedValues.add(unit);
+            sum += unit;
+        }
+        separatedValues.add(totalMoney - sum);
+        return separatedValues;
     }
 }

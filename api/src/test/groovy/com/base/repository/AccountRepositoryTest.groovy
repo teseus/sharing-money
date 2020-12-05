@@ -21,7 +21,10 @@ class AccountRepositoryTest extends Specification {
     def sharing
 
     def setup() {
-        sharing = sharingRepository.save(new Sharing("ABC", "SuiteRoom", 10000L))
+        sharing= sharingRepository.save(Sharing.builder()
+                .roomId("ABC")
+                .totalAmount(10000)
+                .build())
     }
 
     @Transactional
@@ -33,7 +36,7 @@ class AccountRepositoryTest extends Specification {
 
         accountRepository.saveAll(targets)
         when:
-        def accounts = accountRepository.findAccountBySharingToken("ABC")
+        def accounts = accountRepository.findAccountBySharingId(sharing.getId())
         then:
         accounts.size() == 3
     }
@@ -51,7 +54,6 @@ class AccountRepositoryTest extends Specification {
             getAmount() == 10000
             user == null
             sharing.with{
-                token == "ABC"
                 roomId == "SuiteRoom"
             }
         }
@@ -71,7 +73,6 @@ class AccountRepositoryTest extends Specification {
             amount == 10000
             user != null
             sharing.with{
-                token == "ABC"
                 roomId == "SuiteRoom"
             }
         }
