@@ -19,7 +19,7 @@ public final class Account extends CommonEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Sharing sharing;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Version

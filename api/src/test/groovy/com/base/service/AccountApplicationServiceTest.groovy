@@ -3,6 +3,8 @@ package com.base.service
 import com.base.entity.Sharing
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.DataIntegrityViolationException
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -21,16 +23,30 @@ class AccountApplicationServiceTest extends Specification {
     SharingApplicationService sharingApplicationService
     @Autowired
     UserDomainService userDomainService
+    @Shared
+    Sharing sharing
+    def setup() {
+        sharing = sharingApplicationService.shareMoney(USER1_ID, ROOM_ID, TOTAL_MONEY, SHARING_SIZE)
+    }
 
     def "빈 어카운트를 찾아 유저에게 할당해 주어야 한다. 빈 어카운트가 없으면 에러를 발생시킨다."(){
         given:
-        Sharing sharing = sharingApplicationService.shareMoney(USER1_ID, ROOM_ID, TOTAL_MONEY, SHARING_SIZE)
         userDomainService.getUser(USER2_ID)
         when:
         def amount = accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getId())
         then:
         amount.isPresent()
         amount.get().getAmount() == 6666
+    }
+
+    def "두번이상 할당 요청을 하면 에러를 발생시킨다."() {
+        given:
+        userDomainService.getUser(USER2_ID)
+        when:
+        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getId())
+        then:
+        thrown(DataIntegrityViolationException)
     }
 
     def "뿌리기의 주인이 할당요청을 하면 에러를 리턴해야 한다."(){

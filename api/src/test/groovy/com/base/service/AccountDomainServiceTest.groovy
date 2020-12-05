@@ -36,7 +36,8 @@ class AccountDomainServiceTest extends Specification {
     @Transactional
     def "account 를 저장하고, 이 카운트를 서비스에서 읽어 User 를 할당하면 Dirty 의 값이 증가해야 한다."(){
         given:
-        def user = userRepository.save(new User(1L))
+        def user1 = userRepository.save(new User(1L))
+        def user2 = userRepository.save(new User(2L))
         def account = Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build()
         when:
         def saveAccount = accountRepository.save(account)
@@ -45,16 +46,16 @@ class AccountDomainServiceTest extends Specification {
         saveAccount.getUser() == null
         oldDirty == 0
         when:
-        def allocatedAccount = accountDomainService.allocateTo(saveAccount, user)
+        def allocatedAccount = accountDomainService.allocateTo(saveAccount, user1)
         then:
         allocatedAccount.isPresent() == true
         allocatedAccount.get().with {
             getDirty() == 1
             getDirty() == oldDirty + 1
-            getUser() == user
+            getUser() == user1
         }
         when:
-        allocatedAccount = accountDomainService.allocateTo(saveAccount, user)
+        allocatedAccount = accountDomainService.allocateTo(saveAccount, user2)
         then:
         allocatedAccount.isPresent() == false
     }

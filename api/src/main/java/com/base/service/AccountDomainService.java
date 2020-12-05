@@ -1,7 +1,10 @@
 package com.base.service;
 
 import com.base.entity.Account;
+import com.base.entity.DuplicationCheck;
+import com.base.entity.DuplicationCheckId;
 import com.base.entity.User;
+import com.base.repository.DuplicationCheckRepository;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +19,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AccountDomainService {
     private final EntityManager entityManager;
+    private final DuplicationCheckRepository duplicationCheckRepository;
 
     @Transactional
     public Optional<Account> allocateTo(final Account account, final User user) {
+        checkDuplication(account, user);
         try {
             Account foundAccount = allocateUser(account, user);
             return Optional.of(foundAccount);
@@ -27,6 +32,11 @@ public class AccountDomainService {
             log.warn("an allowance allocation Fail for user[{}] and reason[{}]", user, ex.getMessage(), ex);
             return Optional.empty();
         }
+    }
+
+    private void checkDuplication(Account account, User user) {
+        duplicationCheckRepository.save(
+                new DuplicationCheck(new DuplicationCheckId(account.getSharing().getId(), user.getUserId())));
     }
 
     private Account allocateUser(Account account, User user) {
