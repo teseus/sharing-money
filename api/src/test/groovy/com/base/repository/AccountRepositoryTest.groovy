@@ -37,7 +37,7 @@ class AccountRepositoryTest extends Specification {
 
         accountRepository.saveAll(targets)
         when:
-        def accounts = accountRepository.findAccountBySharingId(sharing.getId())
+        def accounts = accountRepository.findAccountBySharingIdAndRoomId(sharing.getId(), sharing.getRoomId())
         then:
         accounts.size() == 3
     }

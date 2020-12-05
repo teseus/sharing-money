@@ -29,11 +29,8 @@ public class SharingApplicationService {
                 "askedTotalMoney must be bigger than separatedSize");
 
         final Optional<User> user = userRepository.findById(userId);
-        if(user.isPresent()) {
-            return makeSharing(user.get(), roomId, askedTotalMoney, separatedSize);
-        }
-
-        return makeSharingNUser(userId, roomId, askedTotalMoney, separatedSize);
+        return user.map(value -> makeSharing(value, roomId, askedTotalMoney, separatedSize))
+                .orElseGet(() -> makeSharingNUser(userId, roomId, askedTotalMoney, separatedSize));
     }
 
     private Sharing makeSharingNUser(final long userId, final String roomId,
@@ -46,7 +43,7 @@ public class SharingApplicationService {
         Sharing savedSharing = sharingRepository.save(Sharing.builder()
                 .user(user)
                 .roomId(roomId)
-                .totalAmount(10000)
+                .totalAmount(askedTotalMoney)
                 .build());
 
         List<Account> accounts = SharingApplicationServiceHelper.separate(askedTotalMoney, separatedSize).stream()
@@ -58,6 +55,6 @@ public class SharingApplicationService {
     }
 
     public List<Account> getAccountsBySharing(final Sharing sharing){
-        return accountRepository.findAccountBySharingId(sharing.getId(), sharing.getRoomId());
+        return accountRepository.findAccountBySharingIdAndRoomId(sharing.getId(), sharing.getRoomId());
     }
 }

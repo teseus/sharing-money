@@ -4,9 +4,12 @@ import com.base.dto.AllowanceResponseDTO;
 import com.base.dto.SharingRequestDTO;
 import com.base.dto.StatusResponseDTO;
 import com.base.dto.TokenResponseDTO;
+import com.base.entity.Account;
 import com.base.entity.Sharing;
+import com.base.service.AccountApplicationService;
 import com.base.service.SharingApplicationService;
 import com.base.util.Encoder;
+import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -22,6 +26,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class MoneySharingController {
     private final SharingApplicationService sharingApplicationService;
+    private final AccountApplicationService accountApplicationService;
 
     @PostMapping("/money/share")
     public Mono<ResponseEntity<TokenResponseDTO>> createToken(
@@ -43,7 +48,9 @@ public class MoneySharingController {
             @PathVariable String receivedToken){
         log.debug("get the money with token [{}], userId [{}], roomId [{}]", receivedToken, userId, roomId);
 
-        return Mono.just(ResponseEntity.ok(new AllowanceResponseDTO(1000)));
+        Optional<Account> account = accountApplicationService.takeAccount(userId, roomId, Encoder.decode(receivedToken));
+        Preconditions.checkState(account.isPresent(), "Allocation Fails for the token :" + receivedToken);
+        return Mono.just(ResponseEntity.ok(new AllowanceResponseDTO(account.get().getAmount())));
     }
 
     @GetMapping("/status/{receivedToken}")

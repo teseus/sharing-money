@@ -2,24 +2,19 @@ package com.base.service;
 
 import com.base.entity.Account;
 import com.base.entity.User;
-import com.base.repository.AccountRepository;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.LockTimeoutException;
-import javax.persistence.PessimisticLockException;
+import javax.persistence.*;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountDomainService {
-    private final AccountRepository accountRepository;
     private final EntityManager entityManager;
 
     @Transactional
@@ -27,8 +22,9 @@ public class AccountDomainService {
         try {
             Account foundAccount = allocateUser(account, user);
             return Optional.of(foundAccount);
-        } catch (IllegalStateException | LockTimeoutException | PessimisticLockException ex) {
-            log.warn("an allowance allocation Fail for user[{}]", user);
+        } catch (IllegalStateException | LockTimeoutException |
+                PessimisticLockException | OptimisticLockException ex) {
+            log.warn("an allowance allocation Fail for user[{}] and reason[{}]", user, ex.getMessage(), ex);
             return Optional.empty();
         }
     }
