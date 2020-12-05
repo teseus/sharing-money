@@ -1,18 +1,19 @@
 package com.base.controller
 
+
 import com.base.dto.AllowanceResponseDTO
 import com.base.dto.SharingRequestDTO
 import com.base.dto.StatusResponseDTO
 import com.base.dto.TokenResponseDTO
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import spock.lang.Shared
 import spock.lang.Specification
 
-@WebFluxTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MoneySharingControllerTest extends Specification {
     //api 호출과 리턴이 잘되는 지만 테스트한다. 내용은 각 유닛테스트에서 체크 한다.
     @Autowired

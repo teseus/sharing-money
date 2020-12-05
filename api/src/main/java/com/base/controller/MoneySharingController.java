@@ -4,6 +4,8 @@ import com.base.dto.AllowanceResponseDTO;
 import com.base.dto.SharingRequestDTO;
 import com.base.dto.StatusResponseDTO;
 import com.base.dto.TokenResponseDTO;
+import com.base.service.SharingApplicationService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +17,10 @@ import java.util.Collections;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class MoneySharingController {
+    private final SharingApplicationService sharingApplicationService;
+
     @PostMapping("/money/share")
     public Mono<ResponseEntity<TokenResponseDTO>> createToken(
             @RequestHeader("X-USER-ID") long userId,
