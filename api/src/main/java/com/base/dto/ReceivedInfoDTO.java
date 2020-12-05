@@ -1,3 +1,6 @@
 package com.base.dto;
 
-public record ReceivedInfoDTO(long userId, long receivedAmount) { }
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record ReceivedInfoDTO(@JsonProperty("userId")long userId,
+                              @JsonProperty("receivedAmount")long receivedAmount) { }
