@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils
 import spock.lang.Specification
 
 class EncoderTest extends Specification {
-    def "encode test"() {
+    def "인코딩 전의 값과 디코딩 후의 값이 같아야 한다."() {
         expect:
-        for (i in 0..<238327) {
+        for (i in [0, 10, 100, 238327]) {
             String encoded = Encoder.encode(i)
             encoded.size() == 3
             int result = Encoder.decode(encoded)
@@ -15,7 +15,7 @@ class EncoderTest extends Specification {
         }
     }
 
-    def "test1"() {
+    def "3자리를 채웠어도 실제 값은 같아야 한다."() {
         expect:
         def a = "A"
         StringUtils.overlay("555", a, 3 - a.length(), 3) == "55A"

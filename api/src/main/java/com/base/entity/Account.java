@@ -1,20 +1,18 @@
 package com.base.entity;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public final class Account extends CommonEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long accountId;
     private long amount;
 
@@ -23,4 +21,16 @@ public final class Account extends CommonEntity {
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private User user;
+
+    @Version
+    private int isDirty;
+
+    @Builder
+    public Account(final long amount,
+                   final Sharing sharing,
+                   final Optional<User> user){
+        this.amount = amount;
+        this.sharing = sharing;
+        user.ifPresent(it->this.user = it);
+    }
 }

@@ -25,11 +25,11 @@ class AccountRepositoryTest extends Specification {
     }
 
     @Transactional
-    def "Token 으로 Account 들을 찾을 수 있어야한다."() {
+    def "Token 으로 Account 들 찾을 수 있어야한다."() {
         given:
-        def targets = [new Account(1, 3333, sharing, null),
-                       new Account(2, 3333, sharing, null),
-                       new Account(3, 3334, sharing, null)]
+        def targets = [Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build(),
+                       Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build(),
+                       Account.builder().amount(3334).sharing(sharing).user(Optional.empty()).build()]
 
         accountRepository.saveAll(targets)
         when:
@@ -41,10 +41,10 @@ class AccountRepositoryTest extends Specification {
     @Transactional
     def "유저 없이 Account 를 저장하고 찾을 수 있어야 한다."() {
         given:
-        def account = new Account(1, 10000, sharing, null)
+        def account = Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build()
         when:
-        accountRepository.save(account)
-        def result = accountRepository.findByAccountId(1L)
+        def savedAccount = accountRepository.save(account)
+        def result = accountRepository.findByAccountId(savedAccount.getAccountId())
         then:
         result.isPresent()
         result.get().with {
@@ -61,10 +61,10 @@ class AccountRepositoryTest extends Specification {
     def "유저 포함 Account 를 저장하고 찾을 수 있어야 한다."(){
         given:
         def user = userRepository.save(new User(1L))
-        def account = new Account(1, 10000, sharing, user)
+        def account = Account.builder().amount(3333).sharing(sharing).user(Optional.of(user)).build()
         when:
-        accountRepository.save(account)
-        def result = accountRepository.findByAccountId(1L)
+        def savedAccount = accountRepository.save(account)
+        def result = accountRepository.findByAccountId(savedAccount.getAccountId())
         then:
         result.isPresent()
         result.get().with {
