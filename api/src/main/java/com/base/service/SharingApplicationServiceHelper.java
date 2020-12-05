@@ -37,7 +37,7 @@ public class SharingApplicationServiceHelper {
         return i <= 57;
     }
 
-    public static List<Long> separate(long totalMoney, long separateNumber) {
+    public static List<Long> separateMoney(long totalMoney, long separateNumber) {
         long unit = totalMoney / separateNumber;
         List<Long> separatedValues = new ArrayList<>();
         long sum = 0;

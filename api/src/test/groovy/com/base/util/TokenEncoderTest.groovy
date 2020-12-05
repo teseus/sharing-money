@@ -3,13 +3,13 @@ package com.base.util
 import org.apache.commons.lang3.StringUtils
 import spock.lang.Specification
 
-class EncoderTest extends Specification {
+class TokenEncoderTest extends Specification {
     def "인코딩 전의 값과 디코딩 후의 값이 같아야 한다."() {
         expect:
         for (i in [0, 10, 100, 238327]) {
-            String encoded = Encoder.encode(i)
+            String encoded = TokenEncoder.encode(i)
             encoded.size() == 3
-            int result = Encoder.decode(encoded)
+            int result = TokenEncoder.decode(encoded)
             println("encoded : ${encoded}, result: ${result}, i: ${i}")
             assert result == i
         }

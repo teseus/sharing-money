@@ -8,7 +8,7 @@ import com.base.entity.Account;
 import com.base.entity.Sharing;
 import com.base.service.AccountApplicationService;
 import com.base.service.SharingApplicationService;
-import com.base.util.Encoder;
+import com.base.util.TokenEncoder;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class MoneySharingController {
         Sharing sharing = sharingApplicationService.shareMoney(
                 userId, roomId, sharingRequestDTO.sharingMoney(), sharingRequestDTO.targetSize());
 
-        return Mono.just(ResponseEntity.ok(new TokenResponseDTO(Encoder.encode(sharing.getId()))));
+        return Mono.just(ResponseEntity.ok(new TokenResponseDTO(TokenEncoder.encode(sharing.getId()))));
     }
 
     @GetMapping("/money/{receivedToken}")
@@ -48,7 +48,7 @@ public class MoneySharingController {
             @PathVariable String receivedToken){
         log.debug("get the money with token [{}], userId [{}], roomId [{}]", receivedToken, userId, roomId);
 
-        Optional<Account> account = accountApplicationService.takeAccount(userId, roomId, Encoder.decode(receivedToken));
+        Optional<Account> account = accountApplicationService.takeAccount(userId, roomId, TokenEncoder.decode(receivedToken));
         Preconditions.checkState(account.isPresent(), "Allocation Fails for the token :" + receivedToken);
         return Mono.just(ResponseEntity.ok(new AllowanceResponseDTO(account.get().getAmount())));
     }

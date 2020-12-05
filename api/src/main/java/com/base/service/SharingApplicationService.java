@@ -5,7 +5,6 @@ import com.base.entity.Sharing;
 import com.base.entity.User;
 import com.base.repository.AccountRepository;
 import com.base.repository.SharingRepository;
-import com.base.repository.UserRepository;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 public class SharingApplicationService {
     private final SharingRepository sharingRepository;
     private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
+    private final UserDomainService userDomainService;
 
     @Transactional
     public Sharing shareMoney(final long userId, final String roomId,
@@ -28,30 +27,28 @@ public class SharingApplicationService {
         Preconditions.checkState(askedTotalMoney > separatedSize,
                 "askedTotalMoney must be bigger than separatedSize");
 
-        final Optional<User> user = userRepository.findById(userId);
-        return user.map(value -> makeSharing(value, roomId, askedTotalMoney, separatedSize))
-                .orElseGet(() -> makeSharingNUser(userId, roomId, askedTotalMoney, separatedSize));
-    }
-
-    private Sharing makeSharingNUser(final long userId, final String roomId,
-                                     final long askedTotalMoney, final long separatedSize) {
-        return makeSharing(userRepository.save(new User(userId)), roomId, askedTotalMoney, separatedSize);
+        return makeSharing(userDomainService.getUser(userId), roomId, askedTotalMoney, separatedSize);
     }
 
     private Sharing makeSharing(final User user, final String roomId,
                                 final long askedTotalMoney, final long separatedSize) {
-        Sharing savedSharing = sharingRepository.save(Sharing.builder()
+        Sharing sharing = sharingRepository.save(Sharing.builder()
                 .user(user)
                 .roomId(roomId)
                 .totalAmount(askedTotalMoney)
                 .build());
 
-        List<Account> accounts = SharingApplicationServiceHelper.separate(askedTotalMoney, separatedSize).stream()
-                .map(it -> Account.builder().amount(it).sharing(savedSharing).user(Optional.empty()).build())
+        List<Account> accounts = SharingApplicationServiceHelper
+                .separateMoney(askedTotalMoney, separatedSize).stream()
+                .map(it -> allocateSeparatedMoneyToEachAccount(sharing, it))
                 .collect(Collectors.toList());
 
         accountRepository.saveAll(accounts);
-        return savedSharing;
+        return sharing;
+    }
+
+    private Account allocateSeparatedMoneyToEachAccount(Sharing savedSharing, Long it) {
+        return Account.builder().amount(it).sharing(savedSharing).user(Optional.empty()).build();
     }
 
     public List<Account> getAccountsBySharing(final Sharing sharing){
