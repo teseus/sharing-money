@@ -29,7 +29,7 @@ class AccountRepositoryTest extends Specification {
     }
 
     @Transactional
-    def "id로 Account 들 찾을 수 있어야한다."() {
+    def "뿌리기 테이블 id로 할당되지 않은 Account 들 찾을 수 있어야한다."() {
         given:
         def targets = [Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build(),
                        Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build(),

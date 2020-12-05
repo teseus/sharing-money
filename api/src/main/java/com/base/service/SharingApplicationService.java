@@ -58,6 +58,6 @@ public class SharingApplicationService {
     }
 
     public List<Account> getAccountsBySharing(final Sharing sharing){
-        return accountRepository.findAccountBySharingId(sharing.getId());
+        return accountRepository.findAccountBySharingId(sharing.getId(), sharing.getRoomId());
     }
 }

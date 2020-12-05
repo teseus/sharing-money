@@ -13,6 +13,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
         select a from Account a 
         join fetch a.sharing s
         where s.id = :sharingId
+        and s.roomId = :roomId
+        and a.user is null
     """) //Join Fetch N+1 회피.
-    List<Account> findAccountBySharingId(long sharingId);
+    List<Account> findAccountBySharingId(long sharingId, String roomId);
 }
