@@ -36,15 +36,15 @@ class AccountApplicationServiceTest extends Specification {
         given:
         userDomainService.getUser(USER2_ID)
         when:
-        def amount = accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getId())
-        amount = accountApplicationService.takeAccount(USER3_ID, ROOM_ID, sharing.getId())
-        amount = accountApplicationService.takeAccount(USER4_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER3_ID, ROOM_ID, sharing.getId())
+        def amount = accountApplicationService.takeAccount(USER4_ID, ROOM_ID, sharing.getId())
         then:
         amount.isPresent()
         amount.get().getAmount() == 6668
         and:
         when: "모두 소진되어 익셉션이 발생되어야 한다."
-        amount = accountApplicationService.takeAccount(USER5_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER5_ID, ROOM_ID, sharing.getId())
         then:
         def ex = thrown(IllegalStateException)
         println(ex.getMessage())
