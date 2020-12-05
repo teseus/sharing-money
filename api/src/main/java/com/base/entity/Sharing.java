@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Entity
@@ -19,9 +16,12 @@ public final class Sharing extends CommonEntity {
     private Long id;
     private String roomId;
     private long totalAmount;
+    @ManyToOne
+    private User user;
     @Builder
-    public Sharing(final String roomId, final long totalAmount){
+    public Sharing(final String roomId, final User user, final long totalAmount){
         this.roomId = roomId;
+        this.user = user;
         this.totalAmount = totalAmount;
     }
 }
