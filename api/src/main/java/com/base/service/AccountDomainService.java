@@ -40,7 +40,8 @@ public class AccountDomainService {
         Preconditions.checkState(foundAccount.getDirty() == 0,
                 "Already dirty account :" + account.getAccountId());
         entityManager.lock(foundAccount, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
-
+        Preconditions.checkState(foundAccount.getDirty() == 1,
+                "Already dirty account :" + account.getAccountId());
         foundAccount.allocateUser(user);
         entityManager.persist(foundAccount);
 
