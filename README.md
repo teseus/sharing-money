@@ -48,7 +48,7 @@ N+1 문제가 생기지 않게 @OneToMany Lazy 로딩을 사용하지 않고, @M
 - RaceCondition 처리 : 동시에 여러 사용자가 한꺼번에 할당요청을 할경우를 위해 Account 엔티티에 @Version 값을 할당하 
 여 PESSIMISTIC_FORCE_INCREMENT 으로 락을 걸었습니다. 개발중 OPTIMISTIC 으로는 실패케이스가 있어서 강한 락을 걸었습니다.
  
-- 테스트 : 모든 서비스의 public 함수는 테스트를 먼저 개발하고 나서 실제 코드를 구현하였습니다.
+- 테스트 : 서비스의 public 함수는 대부분 테스트를 먼저 개발하고 나서 실제 코드를 구현하였습니다.
 DTO 나 Config 와 같은 클래스를 빼고는 대부분 테스트되었으나, Java15 를 사용한 것때문인지 IntelliJ 의 
 CodeCoverage 기능 자체가 에러가 나와서 Coverage 비율을 확인할 수는 없었습니다. 일반적인 gradle 이나 인텔리 제이의 테스트 기능으로는 모두 성공하고 있습니다. 
  참고
