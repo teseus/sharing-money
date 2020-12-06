@@ -18,9 +18,8 @@ public class MoneyStatusController {
     @GetMapping("/status/{receivedToken}")
     public Mono<ResponseEntity<StatusResponseDTO>> getStatus(
             @RequestHeader("X-USER-ID") long userId,
-            @RequestHeader("X-ROOM-ID") String roomId,
             @PathVariable String receivedToken){
-        log.debug("get the status with token [{}], userId [{}], roomId [{}]", receivedToken, userId, roomId);
+        log.debug("get the status with token [{}], userId [{}]", receivedToken, userId);
 
         StatusResponseDTO status = statusApplicationService.getStatus(userId, receivedToken);
 
