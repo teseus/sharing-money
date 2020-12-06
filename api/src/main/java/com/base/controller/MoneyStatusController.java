@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class StatusController {
+public class MoneyStatusController {
     private final StatusApplicationService statusApplicationService;
 
     @GetMapping("/status/{receivedToken}")
