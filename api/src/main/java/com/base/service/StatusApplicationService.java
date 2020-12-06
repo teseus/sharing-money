@@ -6,7 +6,6 @@ import com.base.entity.Account;
 import com.base.entity.Sharing;
 import com.base.entity.User;
 import com.base.repository.AccountRepository;
-import com.base.repository.SharingRepository;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatusApplicationService {
     public static final int SEVEN_DAYS_AGO = 7;
-    private final SharingRepository sharingRepository;
     private final UserDomainService userDomainService;
     private final AccountRepository accountRepository;
 
@@ -34,9 +32,10 @@ public class StatusApplicationService {
                 LocalDateTime.now());
 
         Preconditions.checkState(accounts.size() > 0,
-                "there is no no search result for Token(" + token + "), UserId (" + userId + ")");
+                "[" + token + "]토큰 과 [" + userId + "]유저로는 조회 정보가 없습니다.");
 
-        List<ReceivedInfoDTO> infos = accounts.stream()
+        List<ReceivedInfoDTO> informs = accounts.stream()
+                .filter(it->it.getUser() != null)
                 .map(it -> new ReceivedInfoDTO(it.getUser().getUserId(), it.getAmount()))
                 .collect(Collectors.toList());
         Sharing sharing = accounts.get(0).getSharing();
@@ -44,7 +43,7 @@ public class StatusApplicationService {
         return new StatusResponseDTO(
                 sharing.getCreatedAt(),
                 sharing.getTotalAmount(),
-                infos.stream().mapToLong(ReceivedInfoDTO::allocatedAmount).sum(),
-                infos);
+                informs.stream().mapToLong(ReceivedInfoDTO::allocatedAmount).sum(),
+                informs);
     }
 }

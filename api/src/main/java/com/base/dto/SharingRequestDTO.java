@@ -2,5 +2,9 @@ package com.base.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record SharingRequestDTO(@JsonProperty("sharingMoney") long sharingMoney,
-                                @JsonProperty("targetSize") long targetSize) { }
+import javax.validation.constraints.Min;
+
+public record SharingRequestDTO(@JsonProperty("totalMoney")
+                                @Min(value = 1L) long totalMoney,
+                                @JsonProperty("separatedSize")
+                                @Min(value = 1L) long separatedSize) { }

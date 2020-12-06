@@ -41,15 +41,12 @@ public class AccountDomainService {
 
     private Account allocateUser(Account account, User user) {
         Account foundAccount = entityManager.find(Account.class, account.getAccountId());
-        Preconditions.checkNotNull(foundAccount,
-                "Cannot find the account :" + account.getAccountId());
-        Preconditions.checkState(foundAccount.getDirty() == 0,
-                "Already dirty account :" + account.getAccountId());
+        Preconditions.checkNotNull(foundAccount);
+        Preconditions.checkState(foundAccount.getDirty() == 0);
         entityManager.lock(foundAccount, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
         foundAccount.allocateUser(user);
         entityManager.persist(foundAccount);
-        Preconditions.checkState(foundAccount.getDirty() == 1,
-                "Already dirty account :" + account.getAccountId());
+        Preconditions.checkState(foundAccount.getDirty() == 1);
 
         return foundAccount;
     }

@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +21,10 @@ public class AccountApplicationService {
 
     public Optional<Account> takeAccount(final long userId,
                                          final String roomId,
-                                         final String token) {
-        List<Account> accounts = accountRepository.findAccountByTokenAndRoomId(token, roomId); //todo accountDomainService 밑으로 넣는 것이 더 좋을듯
-        validate(userId, roomId, accounts);
+                                         final String token,
+                                         final LocalDateTime takingTime) {
+        List<Account> accounts = accountRepository.findAccountByTokenAndRoomId(token, roomId);
+        validate(userId, roomId, token, takingTime, accounts);
         User user = userDomainService.getUser(userId);
         return accounts.stream()
                 .sorted(Comparator.comparing(Account::getAccountId))
@@ -30,19 +32,18 @@ public class AccountApplicationService {
                 .findAny();
     }
 
-    private void validate(long userId, String roomId, List<Account> accounts) {
-        Preconditions.checkState(accounts.size() > 0, "there is no available account");
+    private void validate(long userId, String roomId, String token,
+                          final LocalDateTime takingTime, List<Account> accounts) {
+        Preconditions.checkState(accounts.size() > 0,
+                "[" + roomId + "]방에 토큰[" + token + "]으로는 더이상 할당 받을 수 없습니다.");
         Preconditions.checkState(getOwnerId(accounts) != userId,
-                "asking user[" + userId + "] cannot be owner [" + getOwnerId(accounts) +"]");
-        Preconditions.checkState(getRoomId(accounts).equals(roomId),
-                "received roomId[" + roomId + "] is different to Sharing RoomId[" + getRoomId(accounts) + "]");
+                "뿌린 사람[" + getOwnerId(accounts) + "], 자신은 할당 받을 수 없습니다.");
+        Preconditions.checkState(accounts.get(0).getSharing().getCreatedAt().isAfter(
+                takingTime.minusMinutes(10)
+        ), "뿌린지 10분이 초과되었습니다.");
     }
 
     private static long getOwnerId(List<Account> accounts){
         return accounts.get(0).getSharing().getUser().getUserId();
-    }
-
-    private static String getRoomId(List<Account> accounts){
-        return accounts.get(0).getSharing().getRoomId();
     }
 }

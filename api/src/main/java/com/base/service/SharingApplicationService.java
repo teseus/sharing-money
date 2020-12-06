@@ -25,8 +25,13 @@ public class SharingApplicationService {
     @Transactional
     public Sharing shareMoney(final long userId, final String roomId,
                               final long askedTotalMoney, final long separatedSize) {
-        Preconditions.checkState(askedTotalMoney > separatedSize,
-                "askedTotalMoney must be bigger than separatedSize");
+        Preconditions.checkState(askedTotalMoney >= separatedSize,
+                "요청한 금액[" + askedTotalMoney + "]이 " +
+                        "공유할 사용자수[" + separatedSize + "]보다 커 합니다.");
+        Preconditions.checkState(askedTotalMoney != 0 && separatedSize != 0,
+                "요청한 금액[" + askedTotalMoney + "]이나 " +
+                        "공유할 사용자수[" + separatedSize + "]수가 0이 되 될 수 없습니다.");
+
 
         return makeSharing(userDomainService.getUser(userId), roomId, askedTotalMoney, separatedSize);
     }
