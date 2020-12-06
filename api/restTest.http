@@ -5,8 +5,8 @@ X-USER-ID: 1
 Content-Type: application/json
 
 {
-   "sharingMoney": 10000,
-   "targetSize": 10
+  "totalMoney": 10000,
+  "separatedSize": 100
 }
 
 ### 조회하기

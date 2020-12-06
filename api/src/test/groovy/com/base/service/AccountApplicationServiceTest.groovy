@@ -83,7 +83,7 @@ class AccountApplicationServiceTest extends Specification {
         println(ex.getMessage())
     }
 
-    def "요청한 시간이 10분이 넘으면 익셉션을 던져야 한다."() {
+    def "뿌린시간과 요청한 시간의 차이가 10분이 넘으면 익셉션을 던져야 한다."() {
         when: "10분이 아직 안넘은 경우"
         accountApplicationService.takeAccount(USER5_ID, ROOM_ID, sharing.getToken(), NOW.plusMinutes(10))
         then:
