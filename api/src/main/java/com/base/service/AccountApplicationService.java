@@ -20,8 +20,8 @@ public class AccountApplicationService {
 
     public Optional<Account> takeAccount(final long userId,
                                          final String roomId,
-                                         final long sharingId) {
-        List<Account> accounts = accountRepository.findAccountBySharingIdAndRoomId(sharingId); //todo accountDomainService 밑으로 넣는 것이 더 좋을듯
+                                         final String token) {
+        List<Account> accounts = accountRepository.findAccountByTokenAndRoomId(token, roomId); //todo accountDomainService 밑으로 넣는 것이 더 좋을듯
         validate(userId, roomId, accounts);
         User user = userDomainService.getUser(userId);
         return accounts.stream()

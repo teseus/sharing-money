@@ -6,6 +6,7 @@ import com.base.entity.User
 import com.base.repository.AccountRepository
 import com.base.repository.SharingRepository
 import com.base.repository.UserRepository
+import com.base.util.TokenEncoder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
@@ -31,6 +32,8 @@ class AccountDomainServiceTest extends Specification {
                 .user(userRepository.save(new User(1)))
                 .totalAmount(10000)
                 .build())
+        sharing.changeToken(TokenEncoder.encode(sharing.getId()))
+        sharingRepository.save(sharing)
     }
 
     @Transactional

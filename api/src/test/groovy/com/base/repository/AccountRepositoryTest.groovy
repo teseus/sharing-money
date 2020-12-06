@@ -3,6 +3,7 @@ package com.base.repository
 import com.base.entity.Account
 import com.base.entity.Sharing
 import com.base.entity.User
+import com.base.util.TokenEncoder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
@@ -26,6 +27,8 @@ class AccountRepositoryTest extends Specification {
                 .user(userRepository.save(new User(1)))
                 .totalAmount(10000)
                 .build())
+        sharing.changeToken(TokenEncoder.encode(sharing.getId()))
+        sharingRepository.save(sharing)
     }
 
     @Transactional
@@ -37,7 +40,7 @@ class AccountRepositoryTest extends Specification {
 
         accountRepository.saveAll(targets)
         when:
-        def accounts = accountRepository.findAccountBySharingIdAndRoomId(sharing.getId())
+        def accounts = accountRepository.findAccountByTokenAndRoomId(sharing.getToken(), sharing.getRoomId())
         then:
         accounts.size() == 3
     }

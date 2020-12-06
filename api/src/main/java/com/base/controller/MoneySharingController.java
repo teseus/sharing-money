@@ -48,7 +48,7 @@ public class MoneySharingController {
             @PathVariable String receivedToken){
         log.debug("get the money with token [{}], userId [{}], roomId [{}]", receivedToken, userId, roomId);
 
-        Optional<Account> account = accountApplicationService.takeAccount(userId, roomId, TokenEncoder.decode(receivedToken));
+        Optional<Account> account = accountApplicationService.takeAccount(userId, roomId, receivedToken);
         Preconditions.checkState(account.isPresent(), "Allocation Fails for the token :" + receivedToken);
         return Mono.just(ResponseEntity.ok(new AllowanceResponseDTO(account.get().getAmount())));
     }
@@ -58,8 +58,8 @@ public class MoneySharingController {
             @RequestHeader("X-USER-ID") long userId,
             @RequestHeader("X-ROOM-ID") String roomId,
             @PathVariable String receivedToken){
-        log.debug("get the money with token [{}], userId [{}], roomId [{}]", receivedToken, userId, roomId);
+        log.debug("get the status with token [{}], userId [{}], roomId [{}]", receivedToken, userId, roomId);
 
-        return Mono.just(ResponseEntity.ok(new StatusResponseDTO(LocalDateTime.now(), 10000, Collections.emptyList())));
+        return Mono.just(ResponseEntity.ok(new StatusResponseDTO(LocalDateTime.now(), 10000, 6666, Collections.emptyList())));
     }
 }

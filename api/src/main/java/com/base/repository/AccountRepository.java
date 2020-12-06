@@ -9,11 +9,13 @@ import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByAccountId(long accountId);
+
     @Query("""
         select a from Account a 
         join fetch a.sharing s
-        where s.id = :sharingId
+        where s.token = :token
+        and s.roomId = :roomId
         and a.user is null
     """) //Join Fetch N+1 회피.
-    List<Account> findAccountBySharingIdAndRoomId(long sharingId);
+    List<Account> findAccountByTokenAndRoomId(String token, String roomId);
 }

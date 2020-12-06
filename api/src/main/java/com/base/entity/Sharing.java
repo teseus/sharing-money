@@ -10,10 +10,12 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Table(indexes = {@Index(columnList="token")})
 public final class Sharing extends CommonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String token;
     private String roomId;
     private long totalAmount;
     @ManyToOne
@@ -23,5 +25,10 @@ public final class Sharing extends CommonEntity {
         this.roomId = roomId;
         this.user = user;
         this.totalAmount = totalAmount;
+    }
+
+    public Sharing changeToken(final String token){
+        this.token = token;
+        return this;
     }
 }

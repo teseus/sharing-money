@@ -5,6 +5,7 @@ import com.base.entity.Sharing;
 import com.base.entity.User;
 import com.base.repository.AccountRepository;
 import com.base.repository.SharingRepository;
+import com.base.util.TokenEncoder;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,19 +33,29 @@ public class SharingApplicationService {
 
     private Sharing makeSharing(final User user, final String roomId,
                                 final long askedTotalMoney, final long separatedSize) {
+        Sharing sharing = makeSharingAndToken(user,roomId, askedTotalMoney);
+        allocSeparatedMoney(sharing, separatedSize);
+        return sharing;
+    }
+
+    private void allocSeparatedMoney(final Sharing sharing, long separatedSize) {
+        List<Account> accounts = SharingApplicationServiceHelper
+                .separateMoney(sharing.getTotalAmount(), separatedSize).stream()
+                .map(it -> allocateSeparatedMoneyToEachAccount(sharing, it))
+                .collect(Collectors.toList());
+
+        accountRepository.saveAll(accounts);
+    }
+
+    private Sharing makeSharingAndToken(final User user, final String roomId,
+                                        final long askedTotalMoney){
         Sharing sharing = sharingRepository.save(Sharing.builder()
                 .user(user)
                 .roomId(roomId)
                 .totalAmount(askedTotalMoney)
                 .build());
-
-        List<Account> accounts = SharingApplicationServiceHelper
-                .separateMoney(askedTotalMoney, separatedSize).stream()
-                .map(it -> allocateSeparatedMoneyToEachAccount(sharing, it))
-                .collect(Collectors.toList());
-
-        accountRepository.saveAll(accounts);
-        return sharing;
+        sharing.changeToken(TokenEncoder.encode(sharing.getId()));
+        return sharingRepository.save(sharing);
     }
 
     private Account allocateSeparatedMoneyToEachAccount(Sharing savedSharing, Long it) {
@@ -52,6 +63,6 @@ public class SharingApplicationService {
     }
 
     public List<Account> getAccountsBySharing(final Sharing sharing){
-        return accountRepository.findAccountBySharingIdAndRoomId(sharing.getId());
+        return accountRepository.findAccountByTokenAndRoomId(sharing.getToken(), sharing.getRoomId());
     }
 }

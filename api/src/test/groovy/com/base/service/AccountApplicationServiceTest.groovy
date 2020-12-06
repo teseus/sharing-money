@@ -17,7 +17,7 @@ class AccountApplicationServiceTest extends Specification {
     public static final int USER2_ID = 2
     public static final int USER3_ID = 3
     public static final int USER4_ID = 4
-    public static final int USER5_ID = 6
+    public static final int USER5_ID = 5
 
     @Subject
     @Autowired
@@ -28,23 +28,22 @@ class AccountApplicationServiceTest extends Specification {
     UserDomainService userDomainService
     @Shared
     Sharing sharing
+
     def setup() {
         sharing = sharingApplicationService.shareMoney(USER1_ID, ROOM_ID, TOTAL_MONEY, SHARING_SIZE)
     }
 
     def "빈 어카운트를 찾아 유저에게 할당해 주어야 한다. 할당이 끝났는데도 요청이 또 들어오면 익셉션을 발생시킨다."(){
-        given:
-        userDomainService.getUser(USER2_ID)
         when:
-        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getId())
-        accountApplicationService.takeAccount(USER3_ID, ROOM_ID, sharing.getId())
-        def amount = accountApplicationService.takeAccount(USER4_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getToken())
+        accountApplicationService.takeAccount(USER3_ID, ROOM_ID, sharing.getToken())
+        def amount = accountApplicationService.takeAccount(USER4_ID, ROOM_ID, sharing.getToken())
         then:
         amount.isPresent()
         amount.get().getAmount() == 6668
         and:
         when: "모두 소진되어 익셉션이 발생되어야 한다."
-        accountApplicationService.takeAccount(USER5_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER5_ID, ROOM_ID, sharing.getToken())
         then:
         def ex = thrown(IllegalStateException)
         println(ex.getMessage())
@@ -54,12 +53,12 @@ class AccountApplicationServiceTest extends Specification {
         given:
         userDomainService.getUser(USER2_ID)
         when:
-        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getToken())
         then:
         noExceptionThrown()
         and:
         when:
-        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getToken())
         then:
         def ex = thrown(DataIntegrityViolationException)
         println(ex.getMessage())
@@ -67,7 +66,7 @@ class AccountApplicationServiceTest extends Specification {
 
     def "뿌리기의 주인이 할당요청을 하면 익셉션을 던진다."(){
         when:
-        accountApplicationService.takeAccount(USER1_ID, ROOM_ID, sharing.getId())
+        accountApplicationService.takeAccount(USER1_ID, ROOM_ID, sharing.getToken())
         then:
         def ex = thrown(IllegalStateException)
         println(ex.getMessage())
@@ -75,7 +74,7 @@ class AccountApplicationServiceTest extends Specification {
 
     def "뿌리기의 룸아이디가 다르다면 익셉션을 던져야 한다."(){
         when:
-        accountApplicationService.takeAccount(USER2_ID, "OTHER_ROOM", sharing.getId())
+        accountApplicationService.takeAccount(USER2_ID, "OTHER_ROOM", sharing.getToken())
         then:
         def ex = thrown(IllegalStateException)
         println(ex.getMessage())

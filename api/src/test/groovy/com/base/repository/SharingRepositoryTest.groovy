@@ -2,6 +2,7 @@ package com.base.repository
 
 import com.base.entity.Sharing
 import com.base.entity.User
+import com.base.util.TokenEncoder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
@@ -24,6 +25,8 @@ class SharingRepositoryTest extends Specification {
                 .totalAmount(10000)
                 .user(newUser)
                 .build())
+        sharing.changeToken(TokenEncoder.encode(sharing.getId()))
+        sharingRepository.save(sharing)
 
         def foundSharing = sharingRepository.findById(sharing.getId())
         then:
@@ -31,6 +34,7 @@ class SharingRepositoryTest extends Specification {
         foundSharing.get().with {
             sharing == it
             newUser == getUser()
+            token = TokenEncoder.encode(getId())
         }
     }
 }
