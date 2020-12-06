@@ -46,7 +46,6 @@ public class AccountDomainService {
         entityManager.lock(foundAccount, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
         foundAccount.allocateUser(user);
         entityManager.persist(foundAccount);
-        Preconditions.checkState(foundAccount.getDirty() == 1);
 
         return foundAccount;
     }

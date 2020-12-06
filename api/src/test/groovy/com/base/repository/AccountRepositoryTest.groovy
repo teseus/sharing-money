@@ -86,7 +86,7 @@ class AccountRepositoryTest extends Specification {
     }
 
     @Transactional
-    def "account 조회는 7일 이내에 들어와만 조회할 수 있다."() {
+    def "뿌린 건에 대한 조회는 7일 동안 할 수 있다."() {
         given:
         def user = userRepository.save(new User(1L))
         def user2 = userRepository.save(new User(2L))

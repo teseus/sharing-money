@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils
 import spock.lang.Specification
 
 class TokenEncoderTest extends Specification {
-    def "인코딩 전의 값과 디코딩 후의 값이 같아야 한다."() {
+    def "token은 3자리 문자열로 구성되며 예측이 불가능해야 한다."() {
         expect:
         for (i in [0, 10, 100, 238327, Base60.MAXIMUM_VALUE, Base60.MAXIMUM_VALUE+2, Base60.MAXIMUM_VALUE*2+100]) {
             String encoded = TokenEncoder.encode(i)

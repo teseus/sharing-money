@@ -6,6 +6,8 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,6 +32,12 @@ public class SharingMoneyRestGlobalExceptionHandler {
     public ResponseEntity<ErrorMessageDTO> catchBadRequest(MethodArgumentNotValidException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(assbleErrorMessageDTO(ex, ex.getMessage()));
+    }
+
+    @ExceptionHandler(value = {UnexpectedRollbackException.class, JpaSystemException.class})
+    public ResponseEntity<ErrorMessageDTO> catchBadRequest(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(assbleErrorMessageDTO(ex, "사용자가 몰려서 취소 되었습니다. 다시 청해 주세요."));
     }
 
     @ExceptionHandler(value = {Exception.class})
