@@ -4,7 +4,6 @@ import com.base.dto.ReceivedInfoDTO;
 import com.base.dto.StatusResponseDTO;
 import com.base.entity.Account;
 import com.base.entity.Sharing;
-import com.base.entity.User;
 import com.base.repository.AccountRepository;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
@@ -24,26 +23,45 @@ public class StatusApplicationService {
 
     @Transactional(readOnly = true)
     public StatusResponseDTO getStatus(final long userId, final String token) {
-        User user = userDomainService.getUser(userId);
-        List<Account> accounts = accountRepository.findAccountByUserAndTokenAndDate(
-                user,
-                token,
-                LocalDateTime.now().minusDays(SEVEN_DAYS_AGO),
-                LocalDateTime.now());
+        List<Account> accounts = getAccountsIn7Days(token, userId);
+        validate(userId, token, accounts);
 
-        Preconditions.checkState(accounts.size() > 0,
-                "[" + token + "]토큰 과 [" + userId + "]유저로는 조회 정보가 없습니다.");
+        return assembleStatusDto(getSharing(accounts), getReceiveCompleteInfo(accounts));
+    }
 
-        List<ReceivedInfoDTO> informs = accounts.stream()
-                .filter(it->it.getUser() != null)
-                .map(it -> new ReceivedInfoDTO(it.getUser().getUserId(), it.getAmount()))
-                .collect(Collectors.toList());
-        Sharing sharing = accounts.get(0).getSharing();
-
+    private StatusResponseDTO assembleStatusDto(Sharing sharing, List<ReceivedInfoDTO> receiveCompletes) {
         return new StatusResponseDTO(
                 sharing.getCreatedAt(),
                 sharing.getTotalAmount(),
-                informs.stream().mapToLong(ReceivedInfoDTO::allocatedAmount).sum(),
-                informs);
+                sumReceiveCompleteAmount(receiveCompletes),
+                receiveCompletes);
+    }
+
+    private long sumReceiveCompleteAmount(List<ReceivedInfoDTO> receiveCompletes) {
+        return receiveCompletes.stream().mapToLong(ReceivedInfoDTO::allocatedAmount).sum();
+    }
+
+    private Sharing getSharing(List<Account> accounts) {
+        return accounts.get(0).getSharing();
+    }
+
+    private List<ReceivedInfoDTO> getReceiveCompleteInfo(List<Account> accounts) {
+        return accounts.stream()
+                .filter(it -> it.getUser() != null)
+                .map(it -> new ReceivedInfoDTO(it.getUser().getUserId(), it.getAmount()))
+                .collect(Collectors.toList());
+    }
+
+    private void validate(long userId, String token, List<Account> accounts) {
+        Preconditions.checkState(accounts.size() > 0,
+                "[" + token + "]토큰 과 [" + userId + "]유저로는 조회 정보가 없습니다.");
+    }
+
+    private List<Account> getAccountsIn7Days(String token, long userId) {
+        return accountRepository.findAccountByUserAndTokenAndDate(
+                userDomainService.getUser(userId),
+                token,
+                LocalDateTime.now().minusDays(SEVEN_DAYS_AGO),
+                LocalDateTime.now());
     }
 }

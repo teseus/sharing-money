@@ -23,13 +23,25 @@ public class AccountApplicationService {
                                          final String roomId,
                                          final String token,
                                          final LocalDateTime takingTime) {
-        List<Account> accounts = accountRepository.findAccountByTokenAndRoomId(token, roomId);
+        List<Account> accounts = findAccounts(roomId, token);
         validate(userId, roomId, token, takingTime, accounts);
-        User user = userDomainService.getUser(userId);
+
+        return tryToTakeOne(accounts, getUser(userId));
+    }
+
+    private User getUser(long userId) {
+        return userDomainService.getUser(userId);
+    }
+
+    private Optional<Account> tryToTakeOne(List<Account> accounts, User user) {
         return accounts.stream()
                 .sorted(Comparator.comparing(Account::getAccountId))
                 .filter(it -> accountDomainService.allocateTo(it, user).isPresent())
                 .findAny();
+    }
+
+    private List<Account> findAccounts(String roomId, String token) {
+        return accountRepository.findAccountByTokenAndRoomId(token, roomId);
     }
 
     private void validate(long userId, String roomId, String token,
