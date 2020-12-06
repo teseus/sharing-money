@@ -1,15 +1,13 @@
 package com.base.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 @Table(indexes = {@Index(columnList="token")})
 public final class Sharing extends CommonEntity {
     @Id

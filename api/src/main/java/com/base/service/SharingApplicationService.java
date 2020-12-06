@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -66,15 +64,5 @@ public class SharingApplicationService {
 
     public List<Account> getAccountsBySharing(final Sharing sharing){
         return accountRepository.findAccountByTokenAndRoomId(sharing.getToken(), sharing.getRoomId());
-    }
-
-    @Transactional(readOnly = true)
-    public List<Account> getAccountsByUserAndDate(
-            final long userId, final LocalDateTime startAt, final LocalDateTime endAt){
-        User user = userDomainService.getUser(userId);
-        List<Sharing> sharings = sharingRepository.findByUserAndCreatedAtBetween(user,
-                startAt, endAt);
-        return Collections.emptyList();
-//        return accountRepository.findAccountByTokenAndRoomId(sharing.getToken(), sharing.getRoomId());
     }
 }

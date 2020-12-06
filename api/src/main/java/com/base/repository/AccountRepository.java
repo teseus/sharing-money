@@ -5,6 +5,7 @@ import com.base.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
@@ -25,4 +26,14 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
         and s.roomId = :roomId
     """) //Join Fetch N+1 회피.
     List<Account> findAccountByUserAndTokenAndRoomId(final User user, final String token, final String roomId);
+
+    @Query("""
+        select a from Account a 
+        join fetch a.sharing s
+        where s.user = :user
+        and s.token = :token
+        and s.createdAt between :startAt and :endAt
+    """) //Join Fetch N+1 회피.
+    List<Account> findAccountByUserAndTokenAndDate(final User user, final String token,
+                                                   final LocalDateTime startAt, final LocalDateTime endAt);
 }

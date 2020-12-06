@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.time.LocalDateTime
+
 @SpringBootTest
 class AccountRepositoryTest extends Specification {
     @Autowired
@@ -22,7 +24,7 @@ class AccountRepositoryTest extends Specification {
     def sharing
 
     def setup() {
-        sharing= sharingRepository.save(Sharing.builder()
+        sharing = sharingRepository.save(Sharing.builder()
                 .roomId("ABC")
                 .user(userRepository.save(new User(1)))
                 .totalAmount(10000)
@@ -57,28 +59,48 @@ class AccountRepositoryTest extends Specification {
         result.get().with {
             getAmount() == 10000
             user == null
-            sharing.with{
+            sharing.with {
                 roomId == "SuiteRoom"
             }
         }
     }
 
     @Transactional
-    def "유저 포함하여 Account 를 저장하고 찾을 수 있어야 한다."(){
+    def "유저 포함하여 Account 를 저장하고 찾을 수 있어야 한다."() {
         given:
         def user = userRepository.save(new User(1L))
         def account = Account.builder().amount(3333).sharing(sharing).user(Optional.of(user)).build()
         accountRepository.save(account)
         when:
-        def result = accountRepository.findAccountByUserAndTokenAndRoomId(user, sharing.getToken(),sharing.getRoomId())
+        def result = accountRepository
+                .findAccountByUserAndTokenAndRoomId(user, sharing.getToken(), sharing.getRoomId())
         then:
-        result.size() > 0
+        result.size() == 1
         result.get(0).with {
             amount == 10000
             user != null
-            sharing.with{
+            sharing.with {
                 roomId == "SuiteRoom"
             }
         }
+    }
+
+    @Transactional
+    def "account 조회는 7일 이내에 들어와만 조회할 수 있다."() {
+        given:
+        def user = userRepository.save(new User(1L))
+        def user2 = userRepository.save(new User(2L))
+        def account = Account.builder().amount(3333).sharing(sharing).user(Optional.of(user2)).build()
+        accountRepository.save(account)
+        when: "7일 이내일 경"
+        def result = accountRepository.findAccountByUserAndTokenAndDate(
+                user, sharing.getToken(), LocalDateTime.now().minusDays(7), LocalDateTime.now() )
+        then:
+        result.size() == 1
+        when: "7일을 넘어가는 경"
+        result = accountRepository.findAccountByUserAndTokenAndDate(
+                user, sharing.getToken(), LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(8) )
+        then:
+        result.size() == 0
     }
 }

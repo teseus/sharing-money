@@ -4,6 +4,7 @@ import com.base.dto.StatusResponseDTO
 import com.base.entity.Sharing
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.transaction.annotation.Transactional
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
@@ -33,14 +34,16 @@ class StatusApplicationServiceTest extends Specification {
         sharing = sharingApplicationService.shareMoney(USER1_ID, ROOM_ID, TOTAL_MONEY, SHARING_SIZE)
     }
 
+    @Transactional
     def "토큰을 주면 상태정보를 리턴해야 한다."(){
         given:
         accountApplicationService.takeAccount(USER2_ID, ROOM_ID, sharing.getToken())
         accountApplicationService.takeAccount(USER3_ID, ROOM_ID, sharing.getToken())
         accountApplicationService.takeAccount(USER4_ID, ROOM_ID, sharing.getToken())
-        accountApplicationService.takeAccount(USER5_ID, ROOM_ID, sharing.getToken())
+        def account = accountApplicationService.takeAccount(USER5_ID, ROOM_ID, sharing.getToken())
+        println("last amount ${account.get()}")
         when:
-        StatusResponseDTO status = statusApplicationService.getStatus(sharing.getToken())
+        StatusResponseDTO status = statusApplicationService.getStatus(USER1_ID, sharing.getToken())
         then:
         noExceptionThrown()
         status.receivedInfoDTOs().size() == 4

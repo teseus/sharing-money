@@ -5,6 +5,7 @@ import com.base.entity.User
 import com.base.util.TokenEncoder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
@@ -40,16 +41,18 @@ class SharingRepositoryTest extends Specification {
             token = TokenEncoder.encode(getId())
         }
 
-        when: "유저와 7일이내로 찾을 때"
+        when: "유저와 현재로 부터 7일 이전으로 찾을 때"
         foundSharing = sharingRepository.findByUserAndCreatedAtBetween(newUser,
-                LocalDateTime.now().minusDays(7), LocalDateTime.now())
+                LocalDateTime.now().minusDays(7), LocalDateTime.now(),
+                PageRequest.of(0, 10))
         then:
-        foundSharing.size() == 1
+        foundSharing.getTotalElements() == 1
 
-        when: "유저와 8일 이전으로 찾을때"
-       foundSharing = sharingRepository.findByUserAndCreatedAtBetween(newUser,
-                LocalDateTime.now().minusDays(8), LocalDateTime.now().minusDays(1))
+        when: "날짜의 범위가 어긋날때는 결과가 없어야 한다."
+        foundSharing = sharingRepository.findByUserAndCreatedAtBetween(newUser,
+                LocalDateTime.now().minusDays(8), LocalDateTime.now().minusDays(1),
+                PageRequest.of(0, 10))
         then:
-        foundSharing.size() == 0
+        foundSharing.getTotalElements() == 0
     }
 }

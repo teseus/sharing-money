@@ -1,6 +1,7 @@
 package com.base.entity;
 
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
+@ToString
 @EntityListeners(AuditingEntityListener.class)
 public abstract sealed class CommonEntity
         permits User, Account, Sharing {
