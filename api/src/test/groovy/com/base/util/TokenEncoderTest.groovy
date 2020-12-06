@@ -6,12 +6,12 @@ import spock.lang.Specification
 class TokenEncoderTest extends Specification {
     def "인코딩 전의 값과 디코딩 후의 값이 같아야 한다."() {
         expect:
-        for (i in [0, 10, 100, 238327]) {
+        for (i in [0, 10, 100, 238327, Base62.MAXIMUM_VALUE, Base62.MAXIMUM_VALUE+2, Base62.MAXIMUM_VALUE*2+100]) {
             String encoded = TokenEncoder.encode(i)
             encoded.size() == 3
             int result = TokenEncoder.decode(encoded)
             println("encoded : ${encoded}, result: ${result}, i: ${i}")
-            assert result == i
+            assert result == i%(Base62.MAXIMUM_VALUE)
         }
     }
 

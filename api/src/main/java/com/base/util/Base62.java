@@ -4,25 +4,26 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Base62 {
+    private static final String RANDOM_NUMERIC_ALPHABET = "5N8mABTtnJuLv4w9Hqck1DWU70FrZgbR3VlM2OaozxQPSyKiseYEIXf6GhpdjC";
 
-    private static final String ALPHABET = "5N8mABTtnJuLv4w9Hqck1DWU70FrZgbR3VlM2OaozxQPSyKiseYEIXf6GhpdjC";
-
-    private static final long BASE = ALPHABET.length();
+    private static final long BASE = RANDOM_NUMERIC_ALPHABET.length();
+    public static final int MAXIMUM_VALUE = 238327+1;
 
     public static String fromBase10(long i) {
+        long modular = i % MAXIMUM_VALUE;
         StringBuilder sb = new StringBuilder("");
-        if (i == 0) {
-            return String.valueOf(ALPHABET.charAt(0));
+        if (modular == 0) {
+            return String.valueOf(RANDOM_NUMERIC_ALPHABET.charAt(0));
         }
-        while (i > 0) {
-            i = fromBase10(i, sb);
+        while (modular > 0) {
+            modular = fromBase10(modular, sb);
         }
         return sb.reverse().toString();
     }
 
     private static long fromBase10(long i, final StringBuilder sb) {
         int rem = Long.valueOf(i % BASE).intValue();
-        sb.append(ALPHABET.charAt(rem));
+        sb.append(RANDOM_NUMERIC_ALPHABET.charAt(rem));
         return i / BASE;
     }
 
@@ -33,7 +34,7 @@ public class Base62 {
     private static int toBase10(char[] chars) {
         int n = 0;
         for (int i = chars.length - 1; i >= 0; i--) {
-            n += toBase10(ALPHABET.indexOf(chars[i]), i);
+            n += toBase10(RANDOM_NUMERIC_ALPHABET.indexOf(chars[i]), i);
         }
         return n;
     }
