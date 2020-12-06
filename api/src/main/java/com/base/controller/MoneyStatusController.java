@@ -23,6 +23,7 @@ public class MoneyStatusController {
         log.debug("get the status with token [{}], userId [{}], roomId [{}]", receivedToken, userId, roomId);
 
         StatusResponseDTO status = statusApplicationService.getStatus(userId, receivedToken);
+
         return Mono.just(ResponseEntity.ok(status));
     }
 }

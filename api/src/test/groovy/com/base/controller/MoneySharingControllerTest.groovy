@@ -36,7 +36,7 @@ class MoneySharingControllerTest extends Specification {
 
     def "3가지의 api를 호출했을 때 에러가 발생하지 않아야 한다."() {
         given:
-        def request = new SharingRequestDTO(10000, 3)
+        def request = new SharingRequestDTO(1000000, 100)
         when: "뿌릴 금액, 뿌릴 인원으로 뿌리기 api 호출하면 3자리의 문자열로 토큰을 리턴한다."
         body = webTestClient.post()
                 .uri("/api/v1/money/share")

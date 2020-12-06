@@ -23,7 +23,7 @@ public class SharingMoneyRestGlobalExceptionHandler {
     @ExceptionHandler(value = {DataIntegrityViolationException.class})
     public ResponseEntity<ErrorMessageDTO> catchDataViolation(DataIntegrityViolationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(assbleErrorMessageDTO(ex, "같은 토큰으로는 두번이상 받을 수 없습니다."));
+                .body(assbleErrorMessageDTO(ex, "같은 사용자가 두번 이상 받을 수 없습니다."));
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})

@@ -30,6 +30,7 @@ public class MoneyAccountController {
         Optional<Account> account = accountApplicationService.takeAccount(
                 userId, roomId, receivedToken, LocalDateTime.now());
         Preconditions.checkState(account.isPresent(), "[" + receivedToken + "] 토큰으로 할당에 실패했습니다.");
+
         return Mono.just(ResponseEntity.ok(new AllowanceResponseDTO(account.get().getAmount())));
     }
 }

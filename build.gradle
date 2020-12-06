@@ -56,7 +56,6 @@ subprojects {
 
     dependencies {
         compile("org.springframework.boot:spring-boot-devtools")
-        implementation('mysql:mysql-connector-java')
         implementation("com.google.guava:guava:28.2-jre")
         implementation "ch.qos.logback:logback-classic:1.2.3"
         implementation('com.h2database:h2')
@@ -83,17 +82,6 @@ subprojects {
 }
 
 
-project(':common') {
-    bootJar {
-        enabled = false
-    }
-    jar {
-        enabled = true
-    }
-}
 
 project(':api') {
-    dependencies {
-        implementation project(':common')
-    }
 }

@@ -25,7 +25,7 @@ $ sdk u java 15.0.0-amzn
 ### 어플리케이션 실행하는 방법
 - 프로젝트의 루트에서 아래와 같이 실행하면 됨
 ```
-java -jar -XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Xms512m -Xmx1g --enable-preview -Dspring.profiles.active=local ./api/build/libs/api-0.0.1-SNAPSHOT.jar
+java -jar -XX:+UseZGC -Xms512m -Xmx1g --enable-preview ./api/build/libs/api-0.0.1-SNAPSHOT.jar
 ```
 ### 인테리제이의 gradle 플러긴 컴파일 에러가 나오는 경우
 - 아래와 같 인텔리제이의 G이radle plugin 의 JVM 의 version을 15 로 맞춰줘야 함.
