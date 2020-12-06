@@ -51,7 +51,7 @@ class AccountRepositoryTest extends Specification {
         def account = Account.builder().amount(3333).sharing(sharing).user(Optional.empty()).build()
         when:
         def savedAccount = accountRepository.save(account)
-        def result = accountRepository.findByAccountId(savedAccount.getAccountId())
+        def result = accountRepository.findById(savedAccount.getAccountId())
         then:
         result.isPresent()
         result.get().with {
@@ -68,12 +68,12 @@ class AccountRepositoryTest extends Specification {
         given:
         def user = userRepository.save(new User(1L))
         def account = Account.builder().amount(3333).sharing(sharing).user(Optional.of(user)).build()
+        accountRepository.save(account)
         when:
-        def savedAccount = accountRepository.save(account)
-        def result = accountRepository.findByAccountId(savedAccount.getAccountId())
+        def result = accountRepository.findAccountByUserAndTokenAndRoomId(user, sharing.getToken(),sharing.getRoomId())
         then:
-        result.isPresent()
-        result.get().with {
+        result.size() > 0
+        result.get(0).with {
             amount == 10000
             user != null
             sharing.with{
