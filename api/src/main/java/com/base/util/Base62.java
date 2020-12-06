@@ -4,14 +4,14 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Base62 {
-    private static final String RANDOM_NUMERIC_ALPHABET = "5N8mABTtnJuLv4w9Hqck1DWU70FrZgbR3VlM2OaozxQPSyKiseYEIXf6GhpdjC";
+    private static final String RANDOM_NUMERIC_ALPHABET = "5N8tmABTnJuLv4w9Hqck1DWU70FrZgbR3VlM2OaozxQPSyKiseYEIXf6GhpdjC";
 
     private static final long BASE = RANDOM_NUMERIC_ALPHABET.length();
     public static final int MAXIMUM_VALUE = 238327+1;
 
     public static String fromBase10(long i) {
         long modular = i % MAXIMUM_VALUE;
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
         if (modular == 0) {
             return String.valueOf(RANDOM_NUMERIC_ALPHABET.charAt(0));
         }
