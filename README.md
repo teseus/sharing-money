@@ -58,6 +58,7 @@ DDD 고려하여 도메인 객체를 직접 제어하는 경우는 DomainService
 - 테스트 : spock 프레임워크를 사용하여 테스트하였습니다. 서비스의 public 함수는 대부분 테스트를 먼저 개발하고 나서 실제 코드를 구현하였습니다.
 DTO 나 Config 와 같은 클래스를 빼고는 대부분 테스트되었으나, Java15 를 사용한 것때문인지 IntelliJ 의 
 CodeCoverage 기능 자체가 에러가 나와서 Coverage 비율을 확인할 수는 없었습니다. 일반적인 gradle 이나 인텔리 제이의 테스트 기능으로는 모두 성공하고 있습니다. 
+![superkey](./images/testcase.png) 
  
 - 유효성 검는 입력 DTO 에서 할 수 있는 것은 @Valid 로 검증을 하였지만, 대부분의 Validation 은 서비스 층에서 
 검증을 하여 Exception 을 발생하게 하였습니다.
