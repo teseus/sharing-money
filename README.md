@@ -43,13 +43,14 @@ N+1 문제가 생기지 않게 @OneToMany Lazy 로딩을 사용하지 않고, @M
 DDD 고려하여 도메인 객체를 직접 제어하는 경우는 DomainService로 어플리케이션의 비즈니스 로직을 위해서는 ApplicationService 로 
 나누었습니다.
 
-- 뿌리기 api 는 MoneySharingController 에 구현
-- 받기 api 는 MoneyAccountController 에 구현
-- 조회 api 는 MoneyStatusController 에 구현
+- api 내역(http://localhost:8080/swagger-ui.html)
+- 1 뿌리기 api 는 MoneySharingController( money-sharing-controller
+ ) 에 구현
+- 2 받기 api 는 MoneyAccountController( money-account-controller
+ ) 에 구현
+- 3 조회 api 는 MoneyStatusController( money-status-controller
+ ) 에 구현
 되어 있습니다.
-
-각 api 는 swagger 페이지에서 볼 수 있습니다. 
-http://localhost:8080/swagger-ui.html
 
 - RaceCondition 처리 : 동시에 여러 사용자가 한꺼번에 할당요청을 할경우를 위해 Account 엔티티에 @Version 값을 할당하 
 여 PESSIMISTIC_FORCE_INCREMENT 으로 락을 걸었습니다. 개발중 OPTIMISTIC 으로는 실패케이스가 있어서 강한 락을 걸었습니다.
