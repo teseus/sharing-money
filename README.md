@@ -37,7 +37,7 @@ DB 에서 한번 저장하고 다시 AutoIncrease 된값을 얻어서 60글자(6
 
 - 설계 : Sharing 테이블이 뿌리기의 핵심에 해당하는 테이블이며, Account 가 분배된 금액을 갖고 있는 테이블입니다.  
 Sharing 과 Account 의 관계는 1:N 입니다.
-N+1 문제가 생기지 않게 @OneToMany Lazy 로딩을 사용하지 않고, @ManyToOne 만의 관계를 설정하 
+N+1 문제가 생기지 않게 @OneToMany Lazy 로딩을 사용하지 않고, @ManyToOne 만의 관계를 설정하여서 
 조인한 데이터가 필요할때만 Repository 의 (JPQL 조인 패치를 사용한) 함수를 명시적으로 불러서 갖고 오게 했습니다.
 (조인 패치를 위한 JPQL 구문에 java 15의 textblock 을 적용했습니다.)
 DDD 고려하여 도메인 객체를 직접 제어하는 경우는 DomainService로 어플리케이션의 비즈니스 로직을 위해서는 ApplicationService 로 
