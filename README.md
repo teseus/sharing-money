@@ -23,7 +23,7 @@ $ sdk u java 15.0.0-amzn
 ./gradlew clean build
 ```
 ### 어플리케이션 실행하는 방법
-- 프로젝트의 루트에서 아래와 같이 실행하면 됩니다.
+- 프로젝트의 루트에서 아래와 같이 실행하면 됩니다. GC 는 ZGC 를 사용합니다.
 ```
 java -jar -XX:+UseZGC -Xms512m -Xmx1g --enable-preview ./api/build/libs/api-0.0.1-SNAPSHOT.jar
 ```
@@ -37,25 +37,31 @@ DB 에서 한번 저장하고 다시 AutoIncrease 된값을 얻어서 60글자(6
 
 - 설계 : Sharing 테이블이 뿌리기의 핵심에 해당하는 테이블이며, Account 가 분배된 금액을 갖고 있는 테이블입니다.  
 Sharing 과 Account 의 관계는 1:N 입니다.
-N+1 문제가 생기지 않게 @OneToMany Lazy 로딩을 사용하지 않고, @ManyToOne 만의 관계를 설정했습니다. 
-조인값이 필요할때만 Repository 의 함수를 명시적으로 불러서 갖고 오게 했습니다. (JPQL 조인 패치 사용)
+N+1 문제가 생기지 않게 @OneToMany Lazy 로딩을 사용하지 않고, @ManyToOne 만의 관계를 설정하 
+조인한 데이터가 필요할때만 Repository 의 (JPQL 조인 패치를 사용한) 함수를 명시적으로 불러서 갖고 오게 했습니다.
+(조인 패치를 위한 JPQL 구문에 java 15의 textblock 을 적용했습니다.)
+DDD 고려하여 도메인 객체를 직접 제어하는 경우는 DomainService로 어플리케이션의 비즈니스 로직을 위해서는 ApplicationService 로 
+나누었습니다.
 
 - 뿌리기 api 는 MoneySharingController 에 구현
 - 받기 api 는 MoneyAccountController 에 구현
 - 조회 api 는 MoneyStatusController 에 구현
 되어 있습니다.
 
+각 api 는 swagger 페이지에서 볼 수 있습니다. 
+http://localhost:8080/swagger-ui.html
+
 - RaceCondition 처리 : 동시에 여러 사용자가 한꺼번에 할당요청을 할경우를 위해 Account 엔티티에 @Version 값을 할당하 
 여 PESSIMISTIC_FORCE_INCREMENT 으로 락을 걸었습니다. 개발중 OPTIMISTIC 으로는 실패케이스가 있어서 강한 락을 걸었습니다.
  
-- 테스트 : 서비스의 public 함수는 대부분 테스트를 먼저 개발하고 나서 실제 코드를 구현하였습니다.
+- 테스트 : spock 프레임워크를 사용하여 테스트하였습니다. 서비스의 public 함수는 대부분 테스트를 먼저 개발하고 나서 실제 코드를 구현하였습니다.
 DTO 나 Config 와 같은 클래스를 빼고는 대부분 테스트되었으나, Java15 를 사용한 것때문인지 IntelliJ 의 
 CodeCoverage 기능 자체가 에러가 나와서 Coverage 비율을 확인할 수는 없었습니다. 일반적인 gradle 이나 인텔리 제이의 테스트 기능으로는 모두 성공하고 있습니다. 
  
-- 밸리데이션 처리는 입력 DTO 에서 할 수 있는 것은 @Valid 로 검증을 하였지만, 대부분의 Validtion 은 서비스 층에서 
+- 유효성 검는 입력 DTO 에서 할 수 있는 것은 @Valid 로 검증을 하였지만, 대부분의 Validation 은 서비스 층에서 
 검증을 하여 Exception 을 발생하게 하였습니다.
 만약 Exception 이 발생하면 글로벌 익셉션 핸들러(SharingMoneyRestGlobalExceptionHandler) 에서 받아서 다시 에러메시지와 에러 코드로 변환하여
 리턴하게 하였습니다. 
 
 - 엔티티의 생성 수정날짜는 JpaAuditing 을 사용하여 CommonEntity 를 상속하면 자동 생성하게 되었으며, 
-이 부분에 java 15의 sealed 클래스를 적용하였습니다. DTO는 모두 Java 15의  record(Kotlin 의 data 와 유사)로 구현하였습니다.
+이 부분에 java 15의 sealed 클래스를 적용하였습니다. DTO는 모두 Java 15의 record(Kotlin 의 data 와 유사)로 구현하였습니다.
